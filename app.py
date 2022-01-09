@@ -1,11 +1,13 @@
 import face_recognition
 import flask
 from flask import request, jsonify
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import uuid
 import os
 
 app = flask.Flask(__name__)
+CORS(app)
 app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = './'
 
@@ -17,7 +19,7 @@ def home():
 @app.route('/api/v1/validate', methods=['POST'])
 def validate():
     try:
-        params = request.form
+        params = request.json
         known_image = face_recognition.load_image_file(params['face'])
         unknown_image = face_recognition.load_image_file(params['dni'])
         biden_encoding = face_recognition.face_encodings(known_image)[0]
