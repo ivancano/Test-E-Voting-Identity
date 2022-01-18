@@ -46,3 +46,11 @@ RUN cd ~ && \
     cd face_recognition/ && \
     pip3 install -r requirements.txt && \
     python3 setup.py install
+
+# Copy web service script
+COPY app.py /root/app.py
+
+
+# Start the web service
+CMD cd /root/ && \
+    python3 app.py

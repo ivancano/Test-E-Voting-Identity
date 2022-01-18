@@ -5,11 +5,16 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import uuid
 import os
+from bigchaindb_driver import BigchainDB
+from bigchaindb_driver.crypto import generate_keypair
 
 app = flask.Flask(__name__)
 CORS(app)
 app.config["DEBUG"] = True
 app.config['UPLOAD_FOLDER'] = './'
+bdb_root_url = 'http://143.198.189.64:9984'
+bdb = BigchainDB(bdb_root_url)
+alice, bob = generate_keypair(), generate_keypair()
 
 
 @app.route('/', methods=['GET'])
@@ -51,6 +56,43 @@ def upload_file():
         print(e)
         return jsonify({
             'result': str(False)
+        })
+
+@app.route('/api/v1/vote', methods=['POST'])
+def upload_file():
+    try:
+        params = request.json
+        election_asset = {
+            'data': {
+                'vote': {
+                    'election_detail_id': params['election_detail_id'],
+                    'election_id': params['election_id'],
+                    'parties_id': params['parties_id'],
+                    'candidate_id': params['candidate_id'],
+                    'position': params['position']
+                },
+            },
+        }
+        prepared_creation_tx = bdb.transactions.prepare(
+            operation='CREATE',
+            signers=alice.public_key,
+            asset=election_asset
+        )
+
+        fulfilled_creation_tx = bdb.transactions.fulfill(
+            prepared_creation_tx,
+            private_keys=alice.private_key
+        )
+
+        bdb.transactions.send_commit(fulfilled_creation_tx)
+        txid = fulfilled_creation_tx['id']
+        return jsonify({
+            'result': txid
+        })
+    except Exception as e:
+        print(e)
+        return jsonify({
+            'result': 'Error'
         })
 
 if __name__ == "__main__":
