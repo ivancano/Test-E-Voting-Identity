@@ -59,7 +59,7 @@ def upload_file():
         })
 
 @app.route('/api/v1/vote', methods=['POST'])
-def upload_file():
+def vote():
     try:
         params = request.json
         election_asset = {
