@@ -73,6 +73,7 @@ def vote():
                 },
             },
         }
+        print(election_asset)
         prepared_creation_tx = bdb.transactions.prepare(
             operation='CREATE',
             signers=alice.public_key,
