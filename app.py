@@ -69,11 +69,11 @@ def vote():
                     'election_id': params['election_id'],
                     'parties_id': params['parties_id'],
                     'candidate_id': params['candidate_id'],
-                    'position': params['position']
+                    'position': params['position'],
+                    'voter_id': params['voter_id']
                 },
             },
         }
-        print(election_asset)
         prepared_creation_tx = bdb.transactions.prepare(
             operation='CREATE',
             signers=alice.public_key,
