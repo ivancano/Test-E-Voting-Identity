@@ -71,7 +71,7 @@ def vote():
                     'parties_id': params['parties_id'],
                     'candidate_id': params['candidate_id'],
                     'position': params['position'],
-                    'voter_id': 'voter-'+params['voter_id'],
+                    'voter_id': 'voter-'+str(params['voter_id']),
                     'timestamp': datetime.datetime.now().timestamp()
                 },
             },
