@@ -5,6 +5,7 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import uuid
 import os
+import datetime
 from bigchaindb_driver import BigchainDB
 from bigchaindb_driver.crypto import generate_keypair
 
@@ -70,7 +71,8 @@ def vote():
                     'parties_id': params['parties_id'],
                     'candidate_id': params['candidate_id'],
                     'position': params['position'],
-                    'voter_id': params['voter_id']
+                    'voter_id': 'voter-'+params['voter_id'],
+                    'timestamp': datetime.datetime.now().timestamp()
                 },
             },
         }
@@ -95,6 +97,20 @@ def vote():
         return jsonify({
             'result': 'Error'
         })
+
+@app.route('/api/v1/vote-count', methods=['GET'])
+def vote_count():
+    query_params = request.args.get('v')
+    votes = []
+    if(query_params):
+        votes = bdb.assets.get(search='voter-'+query_params)
+    else:
+        votes = bdb.assets.get(search='voter-')
+    print(votes)
+    return jsonify({
+        'result': votes
+    })
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
